@@ -6,8 +6,8 @@
       </v-card-title>
       <v-card-text> 
         <v-form>
-          <v-text-field name="name" label="userName" prepend-icon="mdi-account-circle"></v-text-field>
-          <v-text-field 
+          <v-text-field v-model="userName" name="name" label="userName" prepend-icon="mdi-account-circle"></v-text-field>
+          <v-text-field v-model="password"
             @click:append= "showPassword = !showPassword" 
             :type="showPassword ? 'text' : 'password'" 
             label="showPassword" prepend-icon="mdi-lock"
@@ -18,15 +18,30 @@
       <v-card-actions>
         <v-btn color="success">Register</v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="info">login</v-btn>        
+        <v-btn @click.prevent="login" color="info">Login</v-btn>        
       </v-card-actions>
     </v-card>    
   </div>
 </template>
 <script>
+import firebase from 'firebase'
+import { mapActions } from 'vuex'
 export default {
    data: () => ({
-    showPassword: false//para q no se vea l a contraseña
+    showPassword: false,//para q no se vea l a contraseña   
+    userName: '',
+    password:''    
   }),
+  methods: {
+    ...mapActions(['setUser']),
+    login(){
+      firebase.auth().signInWithEmailAndPassword(this.userName, this.password).then(() => {
+        this.setUser(this.userName)
+        this.$router.push('/apod')
+      }).catch(() => {
+        alert('Usuario erroneo')
+      } )
+    }
+  },
 }
 </script>
